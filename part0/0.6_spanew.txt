@@ -1,0 +1,21 @@
+note left of browser
+*user presses Save"
+end note
+note over browser
+eventhandler prevents
+default handling
+end note
+note over browser
+eventhandler creates
+and adds a new note to
+the notes list
+end note
+note over browser
+server sends new note to
+server as HTTP POST request
+with datatype as JSON determined
+in "Content-type" header
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+browser-->server: {content: "test", date: "2022-11-16T00:34:07.923Z"}
+server-->browser: 201 Created
