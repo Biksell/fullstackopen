@@ -1,12 +1,120 @@
 const { test, after, beforeEach, describe } = require('node:test')
-const Blog = require("../models/blog")
+require("express-async-errors")
+const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const helper = require("./test_helper")
-const assert = require('node:assert')
+const bcrypt = require("bcrypt")
 const app = require('../app')
-
 const api = supertest(app)
+const jwt = require('jsonwebtoken')
+
+
+const helper = require('./test_helper')
+
+const Blog = require('../models/blog')
+const User = require("../models/user")
+
+
+let root = null
+
+// Users
+describe.only('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const userObj = { username: 'root', passwordHash }
+    const user = new User(userObj)
+
+    await user.save()
+    root = user
+    root.token = jwt.sign(userObj, process.env.SECRET)
+  })
+
+  test.only('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'juervaha',
+      name: 'asd',
+      password: 'asd',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
+  test.only('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test.only('creation fails with proper statuscode and message if password is too short', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'jouko',
+      name: 'jjuu',
+      password: 'as'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes("Password is required and must be at least 3 characters long"))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test.only('creation fails with proper statuscode and message if password is missing', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'jouko',
+      name: 'jjuu',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+})
 
 describe("when blogs are initially saved", () => {
   beforeEach(async () => {
@@ -42,12 +150,14 @@ describe("when blogs are initially saved", () => {
         title: "C# is also quite fun",
         author: "Author E",
         url: "url",
-        likes: 200
+        likes: 200,
+        user: root.id
       }
 
       await api
         .post('/api/blogs')
         .send(newBlog)
+        .set("Authorization", `Bearer ${root.token}`)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -62,6 +172,7 @@ describe("when blogs are initially saved", () => {
         title: "C# is also quite fun",
         author: "Author E",
         url: "url",
+        user: root.id
       }
 
       await api
