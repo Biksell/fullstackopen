@@ -23,7 +23,6 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
 
   let loggedUser = JSON.parse(window.localStorage.getItem("loggedBlogappUser"))
   const correctUser = {display: blog.user.username == loggedUser.username ? "" : "none"}
-  console.log(correctUser)
 
   return (
     <div style={blogStyle}>
