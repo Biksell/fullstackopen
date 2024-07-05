@@ -1,32 +1,32 @@
-import {useState} from "react"
+import { useState } from 'react'
 
-const BlogForm = ({createBlog}) => {
-  const [newBlog, setNewBlog] = useState({title: "", author: "", url: ""})
+const BlogForm = ({ createBlog }) => {
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   const addBlog = (event) => {
     event.preventDefault()
     const blogObject = newBlog
     createBlog(blogObject)
-    setNewBlog({title: "", author: "", url: ""})
+    setNewBlog({ title: '', author: '', url: '' })
   }
 
   const handleBlogChange = (event) => {
     let additions = {}
     switch(event.target.id) {
-      case "title":
-        additions = {title: event.target.value}
-        break
-      case "author":
-        additions = {author: event.target.value}
-        break
-      case "url":
-          additions = {url: event.target.value}
-          break
-      default:
-        console.log("Fail")
+    case 'title':
+      additions = { title: event.target.value }
+      break
+    case 'author':
+      additions = { author: event.target.value }
+      break
+    case 'url':
+      additions = { url: event.target.value }
+      break
+    default:
+      console.log('Fail')
     }
 
-    const newBlogObj = {...newBlog, ...additions}
+    const newBlogObj = { ...newBlog, ...additions }
     setNewBlog(newBlogObj)
     console.log(newBlogObj)
   }

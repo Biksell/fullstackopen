@@ -8,10 +8,10 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({message: "", type: ""})
+  const [notification, setNotification] = useState({ message: '', type: '' })
 
   const blogFormRef = useRef()
 
@@ -22,7 +22,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -35,17 +35,17 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      const updatedNotification = {message: `"${blogObject.title}" by ${blogObject.author} has been added`, type: "info"}
+      const updatedNotification = { message: `"${blogObject.title}" by ${blogObject.author} has been added`, type: 'info' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     } catch (exception) {
       console.log(exception)
-      const updatedNotification = {message: exception.response.data.error, type: "error"}
+      const updatedNotification = { message: exception.response.data.error, type: 'error' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     }
   }
@@ -54,43 +54,43 @@ const App = () => {
     if (!confirm(`Do you want to delete ${blogObject.title} by ${blogObject.author}?`)) return
     try {
       await blogService.remove(blogObject)
-      setBlogs(blogs.filter(blog => blog.id != blogObject.id))
-      const updatedNotification = {message: `"${blogObject.title}" has been deleted`, type: "info"}
+      setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+      const updatedNotification = { message: `"${blogObject.title}" has been deleted`, type: 'info' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     } catch (exception) {
       console.log(exception)
-      const updatedNotification = {message: exception.response.data.error, type: "error"}
+      const updatedNotification = { message: exception.response.data.error, type: 'error' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     }
   }
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log("Logging in as: ", username)
+    console.log('Logging in as: ', username)
 
     try {
-      const user = await loginService.login({username, password})
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user))
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setUsername("")
-      setPassword("")
-      const updatedNotification = {message: `Successfully logged in as ${user.name}`, type: "info"}
+      setUsername('')
+      setPassword('')
+      const updatedNotification = { message: `Successfully logged in as ${user.name}`, type: 'info' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     } catch (exception) {
-      const updatedNotification = {message: exception.response.data.error, type: "error"}
+      const updatedNotification = { message: exception.response.data.error, type: 'error' }
       setNotification(updatedNotification)
       setTimeout(() => {
-        setNotification({message: "", type: ""})
+        setNotification({ message: '', type: '' })
       }, 5000)
     }
   }
@@ -100,15 +100,15 @@ const App = () => {
     window.localStorage.clear()
     const tempUser = user
     setUser(null)
-    const updatedNotification = {message: `Successfully logged out of ${tempUser.name}`, type: "info"}
+    const updatedNotification = { message: `Successfully logged out of ${tempUser.name}`, type: 'info' }
     setNotification(updatedNotification)
     setTimeout(() => {
-      setNotification({message: "", type: ""})
+      setNotification({ message: '', type: '' })
     }, 5000)
   }
 
   const addLike = async (blogObject) => {
-    const returnedBlog = await blogService.update({...blogObject, likes: blogObject.likes + 1})
+    const returnedBlog = await blogService.update({ ...blogObject, likes: blogObject.likes + 1 })
     const blogs = await blogService.getAll()
     setBlogs(blogs)
   }
@@ -130,20 +130,20 @@ const App = () => {
         <Notification notification={notification}/>
         <div>
           Username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
-            onChange={({target}) => setUsername(target.value)}
+            onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
           Password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
-            onChange={({target}) => setPassword(target.value)}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
         <button type="submit">login</button>

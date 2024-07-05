@@ -1,5 +1,4 @@
-import {useState} from "react"
-import blogService from '../services/blogs'
+import { useState } from 'react'
 
 const Blog = ({ blog, addLike, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
@@ -21,23 +20,23 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
 
   const absUrl = `//${blog.url}`
 
-  let loggedUser = JSON.parse(window.localStorage.getItem("loggedBlogappUser"))
-  const correctUser = {display: blog.user.username == loggedUser.username ? "" : "none"}
+  let loggedUser = JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
+  const correctUser = { display: blog.user.username === loggedUser.username ? '' : 'none' }
 
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
-        "{blog.title}", by {blog.author}
+        {blog.title}, by {blog.author}
         <button onClick={toggleVisibility}>View</button>
       </div>
       <div style={showWhenVisible}>
-      "{blog.title}", by {blog.author}
-      <button onClick={toggleVisibility}>Hide</button><br></br>
-      <a href={absUrl}>{blog.url}</a><br></br>
+        {blog.title}, by {blog.author}
+        <button onClick={toggleVisibility}>Hide</button><br></br>
+        <a href={absUrl}>{blog.url}</a><br></br>
       Likes: {blog.likes}
-      <button onClick={() => addLike(blog)}>Like</button>
-      <br></br>Added by {blog.user.name}<p></p>
-      <button style={correctUser} onClick={() => deleteBlog(blog)}>Delete</button>
+        <button onClick={() => addLike(blog)}>Like</button>
+        <br></br>Added by {blog.user.name}<p></p>
+        <button style={correctUser} onClick={() => deleteBlog(blog)}>Delete</button>
       </div>
     </div>
   )
