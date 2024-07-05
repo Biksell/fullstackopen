@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2ODZiOGJhZTZhNTYyYjM2ZDZjZDlmNiIsImlhdCI6MTcyMDEwODAzOX0.36Uv-IroKXvh-eFTbHgKoFg-oAoAFzsdmq-hlI6_Lqo
+
+{
+  "title": "The Blog #52323232",
+  "author": "Erkki",
+  "url": "youtube.com",
+  "likes": 50,
+  "user": "6686b8bae6a562b36d6cd9f6"
+}
